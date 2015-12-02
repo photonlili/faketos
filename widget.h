@@ -4,7 +4,12 @@
 #include <QWidget>
 #include <QTcpSocket>
 
+#ifdef _WIN32
+#define __PACKED__
+#pragma pack(push,1)
+#elif __APPLE__
 #define __PACKED__ __attribute__((packed))
+#endif
 
 namespace Ui {
 class Widget;
