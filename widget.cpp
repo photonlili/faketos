@@ -47,13 +47,15 @@ Widget::Widget(QWidget *parent) :
             QString _data = QString::number(counter);
             _data += "*1*";
             strcpy(outmsg.data, _data.toStdString().c_str());
-
-            qDebug() << "send:" << client->write( (char*)(&outmsg), outmsg.head.len+sizeof(MSGHEAD)) << _data;
+            outmsg.head.len = _data.size();
+            outmsg.data[outmsg.head.len] = '\0';
+            qDebug() << "sent byte:" << client->write( (char*)(&outmsg), outmsg.head.len+sizeof(MSGHEAD));
+            qDebug() << "sent:" << outmsg.data << "type:" << outmsg.head.msgtype;
             counter++;
         }
     });
 
-    client->connectToHost("169.169.167.122", 2008);
+    client->connectToHost("192.168.1.5", 2008);
 
 }
 
@@ -108,7 +110,7 @@ bool Widget::readData()
         MSGBUF msg;
         msg.head = currentHead;
         memcpy(msg.data,data.data(),currentHead.len);
-        msg.data[currentHead.len] = 0;
+        msg.data[currentHead.len] = '\0';
         tmpData.remove(0,currentHead.len);
         nextHead = true;
 //        if( currentHead.msgtype != 8800 && currentHead.msgtype != 8889)
